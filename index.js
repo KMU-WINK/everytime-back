@@ -22,4 +22,6 @@ app.use(function (req, res, next) {
   next()
 })
 
+app.use('/', require('./sign')(app, connection))
+
 app.listen(3000)
