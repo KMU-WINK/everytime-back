@@ -3,13 +3,13 @@ module.exports = function (app, connection) {
     var router = express.Router()
 
     app.get('/monthly', function (req, res) {
-        connection.query(`select c.* from calendar as c join calendar_user as u where c.id = u.calendarid and u.userid = ${req.body.userid} and startDate >= '${req.body.year}-${req.body.month}-01' and startDate < (date_add('${req.body.year}-${req.body.month}-01', interval 1 month))`, (err, results, fields) => {
+        connection.query(`select c.* from calendar as c join calendar_user as u where c.id = u.calendarid and u.userid = '${req.body.userid}' and startDate >= '${req.body.year}-${req.body.month}-01' and startDate < (date_add('${req.body.year}-${req.body.month}-01', interval 1 month))`, (err, results, fields) => {
             if (err) res.json({ error: err })
             else res.status(200).json({ data: results })
         })
     })
     app.get('/weekly', function (req, res) {
-        connection.query(`select c.* from calendar as c join calendar_user as u where c.id = u.calendarid and u.userid = ${req.body.userid} and startDate >= '${req.body.year}-${req.body.month}-${req.body.day}' and startDate < (date_add('${req.body.year}-${req.body.month}-${req.body.day}', interval 1 week))`, (err, results, fields) => {
+        connection.query(`select c.* from calendar as c join calendar_user as u where c.id = u.calendarid and u.userid = '${req.body.userid}' and startDate >= '${req.body.year}-${req.body.month}-${req.body.day}' and startDate < (date_add('${req.body.year}-${req.body.month}-${req.body.day}', interval 1 week))`, (err, results, fields) => {
             if (err) res.json({ error: err })
             else res.status(200).json({ data: results })
         })
@@ -24,13 +24,21 @@ module.exports = function (app, connection) {
                     if (a) res.status(201).json({ error: err })
                     else {
                         id = b[0].id
-                        for (let i = 0; i < req.body.userid.length; i++) {
-                            connection.query(`insert into calendar_user values(${id}, '${req.body.userid[i]}', null)`, (err, results, fields) => {
+                        if (typeof(req.body.userid) === typeof('')) {
+                            connection.query(`insert into calendar_user values(${id}, '${req.body.userid}', null)`, (err, results, fields) => {
                                 if (err) res.status(201).json({ error: err })
-                                else if (i === req.body.userid.length - 1) {
-                                    res.status(200).json({ data: results })
-                                }
+                                else res.status(200).json({ data: results })
                             })
+                        }
+                        else {
+                            for (let i = 0; i < req.body.userid.length; i++) {
+                                connection.query(`insert into calendar_user values(${id}, '${req.body.userid[i]}', null)`, (err, results, fields) => {
+                                    if (err) res.status(201).json({ error: err })
+                                    else if (i === req.body.userid.length - 1) {
+                                        res.status(200).json({ data: results })
+                                    }
+                                })
+                            }
                         }
                     }
                 })
