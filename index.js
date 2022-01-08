@@ -29,5 +29,6 @@ app.use('/', require('./calendar')(app, connection))
 app.use('/', require('./sign')(app, connection))
 app.use('/', require('./setting')(app, connection))
 app.use('/', require('./search')(app, connection))
+app.use('/', require('./knock')(app, connection))
 
 app.listen(3000)
