@@ -11,6 +11,7 @@ module.exports = function (app, connection) {
             else res.status(200).json({ data: results })
         })
     })
+    
     app.post('/signin', function (req, res) {
         connection.query(`select * from user where email = '${req.body.email}' and password = '${req.body.password}'`, (err, results, fields) => {
             if (err) res.status(201).json({ error: err })
@@ -22,15 +23,12 @@ module.exports = function (app, connection) {
             }
         })
     })
+
     app.post('/check', function (req, res) {
-        connection.query(`select * from user where email = '${req.body.email}'`, (err, results, fields) => {
+        const id = req.body.email.split('@')[0]
+        connection.query(`select * from user where email = '${req.body.email}' or id = '${id}'`, (err, results, fields) => {
             if (err) res.status(201).json({ error: err })
-            else {
-                if (results.length != 0)
-                    res.status(201).json({ data: results })
-                else
-                    res.status(200).json({ data: results })
-            }
+            else res.status(200 + (results.length == 0 ? 0 : 1)).json({ data: results })
         })
     })
     return router
