@@ -4,7 +4,7 @@ module.exports = function (app, connection) {
 
     app.post('/signup', function (req, res) {
         var id = req.body.email.split('@')[0]
-        connection.query(`insert into user values('${id}','${req.body.password}','${req.body.email}','${req.body.userid}')`, (err, results, fields) => {
+        connection.query(`insert into user values('${id}','${req.body.password}','${req.body.email}','${req.body.nickname}', 1, ${req.body.color})`, (err, results, fields) => {
             if (err) console.log(err)
             else console.log(results)
             if (err) res.status(201).json({ error: err })
