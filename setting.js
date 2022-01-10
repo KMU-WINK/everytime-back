@@ -39,7 +39,7 @@ module.exports = function (app, connection) {
     })
 
     app.put('/email', function (req, res) {
-        connection.query(`update user set email = '${req.body.email}' where email = '${req.body.email}'`, (err, results, fields) => {
+        connection.query(`update user set email = '${req.body.targetEmail}' where email = '${req.body.email}'`, (err, results, fields) => {
             if (err) res.status(201).json({ error: err })
             else res.status(200).json({ data: results })
         })
