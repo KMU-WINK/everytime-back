@@ -4,7 +4,7 @@ module.exports = function (app, connection) {
 
     
     app.post('/knock', function (req, res) {
-        connection.query(`insert into calendar values(null, str_to_date('${req.body.startDate}', '%Y-%d-%m %H:%i:%s'), str_to_date('${req.body.endDate}', '%Y-%d-%m %H:%i:%s'), '${req.body.title}', '${req.body.memo}', ${req.body.color})`, (err, results, fields) => {
+        connection.query(`insert into calendar values(null, str_to_date('${req.body.startDate}', '%Y-%m-%d %H:%i:%s'), str_to_date('${req.body.endDate}', '%Y-%m-%d %H:%i:%s'), '${req.body.title}', '${req.body.memo}', ${req.body.color})`, (err, results, fields) => {
             if (err) res.status(201).json({ error: err })
             else {
                 isSuccess = true
@@ -15,14 +15,14 @@ module.exports = function (app, connection) {
                         id = b[0].id
                         sender = req.body.senderid ? req.body.senderid : 'null'
                         if (typeof(req.body.userid) === typeof('')) {
-                            connection.query(`insert into calendar_user values(${id}, ${sender}, '${req.body.userid}', null, 0)`, (err, results, fields) => {
+                            connection.query(`insert into calendar_user values(${id}, '${sender}', '${req.body.userid}', null, 0)`, (err, results, fields) => {
                                 if (err) res.status(201).json({ error: err })
                                 else res.status(200).json({ data: results })
                             })
                         }
                         else {
                             for (let i = 0; i < req.body.userid.length; i++) {
-                                connection.query(`insert into calendar_user values(${id}, ${sender}, '${req.body.userid[i]}', null, 0)`, (err, results, fields) => {
+                                connection.query(`insert into calendar_user values(${id}, '${sender}', '${req.body.userid[i]}', null, 0)`, (err, results, fields) => {
                                     if (err) res.status(201).json({ error: err })
                                     else if (i === req.body.userid.length - 1) {
                                         res.status(200).json({ data: results })
