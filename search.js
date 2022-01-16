@@ -3,7 +3,7 @@ module.exports = function (app, connection) {
     var router = express.Router()
 
     app.get('/myfollower', function (req, res) {
-        var id = req.body.email.split('@')[0]
+        var id = req.query.email.split('@')[0]
         connection.query(`select u.* from follower as f join user as u on f.followerid = u.id where f.userid = '${id}'`, (err, results, fields) => {
             if (err) res.status(201).json({ error: err })
             else res.status(200).json({ data: results })
@@ -11,7 +11,7 @@ module.exports = function (app, connection) {
     })
     
     app.get('/mygroup', function (req, res) {
-        var id = req.body.email.split('@')[0]
+        var id = req.query.email.split('@')[0]
         connection.query(`select u.* from usergroup_user as g join usergroup as u on g.usergroupid = u.id where g.userid = '${id}'`, (err, results, fields) => {
             if (err) res.status(201).json({ error: err })
             else res.status(200).json({ data: results })
@@ -53,14 +53,14 @@ module.exports = function (app, connection) {
     })
 
     app.get('/searchuser', function (req, res) {
-        connection.query(`select * from user where id like '%${req.body.query}%' or nickname like '%${req.body.query}%'`, (err, results, fields) => {
+        connection.query(`select * from user where id like '%${req.query.query}%' or nickname like '%${req.query.query}%'`, (err, results, fields) => {
             if (err) res.status(201).json({ error: err })
             else res.status(200).json({ data: results })
         })
     })
 
     app.get('/searchgroup', function (req, res) {
-        connection.query(`select * from usergroup where id like '%${req.body.query}%' or nickname like '%${req.body.query}%'`, (err, results, fields) => {
+        connection.query(`select * from usergroup where id like '%${req.query.query}%' or nickname like '%${req.query.query}%'`, (err, results, fields) => {
             if (err) res.status(201).json({ error: err })
             else res.status(200).json({ data: results })
         })
