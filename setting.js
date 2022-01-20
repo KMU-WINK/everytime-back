@@ -54,7 +54,8 @@ module.exports = function (app, connection) {
 
     app.delete('/user', function (req, res) {
         connection.query(`delete from user where email = '${req.body.email}'`, (err, results, fields) => {
-            if (err) res.status(201).json({ error: err })
+            if (results.affectedRows == 0) res.status(201).send('no result')
+            else if (err) res.status(201).json({ error: err })
             else res.status(200).json({ data: results })
         })
     })

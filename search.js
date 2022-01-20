@@ -66,5 +66,13 @@ module.exports = function (app, connection) {
         })
     })
 
+    app.get('/groupuserlist', function (req, res) {
+        connection.query(`select u.* from usergroup_user as g join user as u on g.userid = u.id where g.usergroupid = '${req.query.groupid}'`, (err, results, fields) => {
+            if (results.length == 0) res.status(201).send('no result')
+            else if (err) res.status(201).json({ error: err })
+            else res.status(200).json({ data: results })
+        })
+    })
+
     return router
 }
