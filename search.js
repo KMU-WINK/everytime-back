@@ -53,7 +53,7 @@ module.exports = function (app, connection) {
     })
 
     app.get('/searchuser', function (req, res) {
-        connection.query(`select * from user where id like '%${req.query.query}%' or nickname like '%${req.query.query}%'`, (err, results, fields) => {
+        connection.query(`select * from user where (id like '%${req.query.query}%' or nickname like '%${req.query.query}%' or email = '${req.query.query}') and searchable = true`, (err, results, fields) => {
             if (err) res.status(201).json({ error: err })
             else res.status(200).json({ data: results })
         })
