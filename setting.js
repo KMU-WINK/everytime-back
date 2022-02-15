@@ -67,5 +67,20 @@ module.exports = function (app, connection) {
         })
     })
 
+    app.put('/notifable', function (req, res) {
+        connection.query(`update user set notifable = ${req.body.notifable} where email = '${req.body.email}'`, (err, results, fields) => {
+            if (err) res.status(201).json({ error: err })
+            else res.status(200).json({ data: results })
+        })
+    })
+
+
+    app.get('/user', function (req, res) {
+        connection.query(`select * from user where (id like '%${req.query.query}%' or nickname like '%${req.query.query}%' or email = '${req.query.query}')`, (err, results, fields) => {
+            if (err) res.status(201).json({ error: err })
+            else res.status(200).json({ data: results })
+        })
+    })
+
     return router
 }
