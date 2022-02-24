@@ -3,21 +3,21 @@ module.exports = function (app, connection) {
     var router = express.Router()
 
     app.get('/monthly', function (req, res) {
-        connection.query(`select c.* from calendar as c join calendar_user as u where c.id = u.calendarid and u.userid = '${req.body.userid}' and startDate >= '${req.body.year}-${req.body.month}-01' and startDate < (date_add('${req.body.year}-${req.body.month}-01', interval 1 month))`, (err, results, fields) => {
+        connection.query(`select c.* from calendar as c left join calendar_user as u on c.id = u.calendarid where ((u.senderid is null and u.userid = '${req.body.userid}') or (u.senderid is not null and u.accepted = 0 and u.senderid = '${req.body.userid}') or (u.senderid is not null and u.accepted = 1 and (u.userid = '${req.body.userid}' or u.senderid = '${req.body.userid}'))) and startDate >= '${req.body.year}-${req.body.month}-01' and startDate < (date_add('${req.body.year}-${req.body.month}-01', interval 1 month))`, (err, results, fields) => {
             if (err) res.json({ error: err })
             else res.status(200).json({ data: results })
         })
     })
     app.get('/weekly', function (req, res) {
         var id = req.query.email.split('@')[0]
-        connection.query(`select c.* from calendar as c join calendar_user as u where c.id = u.calendarid and u.userid = '${id}' and startDate >= '${req.query.year}-${req.query.month}-${req.query.day}' and startDate < (date_add('${req.query.year}-${req.query.month}-${req.query.day}', interval 1 week))`, (err, results, fields) => {
+        connection.query(`select c.* from calendar as c left join calendar_user as u on c.id = u.calendarid where ((u.senderid is null and u.userid = '${id}') or (u.senderid is not null and u.accepted = 0 and u.senderid = '${id}') or (u.senderid is not null and u.accepted = 1 and (u.userid = '${id}' or u.senderid = '${id}'))) and startDate >= '${req.query.year}-${req.query.month}-${req.query.day}' and startDate < (date_add('${req.query.year}-${req.query.month}-${req.query.day}', interval 1 week))`, (err, results, fields) => {
             if (err) res.json({ error: err })
             else res.status(200).json({ data: results })
         })
     })
     app.get('/daily', function (req, res) {
         var id = req.query.email.split('@')[0]
-        connection.query(`select c.* from calendar as c join calendar_user as u where c.id = u.calendarid and u.userid = '${id}' and startDate >= '${req.query.year}-${req.query.month}-${req.query.day}' and startDate < (date_add('${req.query.year}-${req.query.month}-${req.query.day}', interval 1 day))`, (err, results, fields) => {
+        connection.query(`select c.* from calendar as c left join calendar_user as u on c.id = u.calendarid where ((u.senderid is null and u.userid = '${id}') or (u.senderid is not null and u.accepted = 0 and u.senderid = '${id}') or (u.senderid is not null and u.accepted = 1 and (u.userid = '${id}' or u.senderid = '${id}'))) and startDate >= '${req.query.year}-${req.query.month}-${req.query.day}' and startDate < (date_add('${req.query.year}-${req.query.month}-${req.query.day}', interval 1 day))`, (err, results, fields) => {
             if (err) res.json({ error: err })
             else res.status(200).json({ data: results })
         })
