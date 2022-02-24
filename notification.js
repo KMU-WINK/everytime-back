@@ -38,7 +38,7 @@ module.exports = function (app, connection) {
 
     app.get('/notification_knock', function (req, res) {
         var id = req.query.email.split('@')[0]
-        connection.query(`select u.*, c.* from calendar_user as u join calendar as c on u.calendarid = c.id where senderid is not null and userid = '${id}' and accepted = 0;`, (err, results, fields) => {
+        connection.query(`select u.*, c.*, (select nickname from user where id = u.senderid) as nickname from calendar_user as u join calendar as c on u.calendarid = c.id where senderid is not null and userid = '${id}' and accepted = 0;`, (err, results, fields) => {
             if (err) res.json({ error: err })
             else res.status(200).json({ data: results })
         })
