@@ -21,7 +21,7 @@ module.exports = function (app, connection) {
     app.post('/followuser', function (req, res) {
         var id = req.body.email.split('@')[0]
         var tid = req.body.targetEmail.split('@')[0]
-        connection.query(`insert into follower values('${id}', '${tid}')`, (err, results, fields) => {
+        connection.query(`insert into follower values('${id}', '${tid}', 0)`, (err, results, fields) => {
             if (err) res.status(201).json({ error: err })
             else res.status(200).json({ data: results })
         })
@@ -31,6 +31,33 @@ module.exports = function (app, connection) {
         var id = req.body.email.split('@')[0]
         var tid = req.body.targetEmail.split('@')[0]
         connection.query(`delete from follower where userid = '${id}' and followerid = '${tid}'`, (err, results, fields) => {
+            if (err) res.status(201).json({ error: err })
+            else res.status(200).json({ data: results })
+        })
+    })
+
+    app.post('/favuser', function (req, res) {
+        var id = req.body.email.split('@')[0]
+        var tid = req.body.targetEmail.split('@')[0]
+        connection.query(`update follower set isFav = 1 where userid = '${id}' and followerid = '${tid}'`, (err, results, fields) => {
+            if (err) res.status(201).json({ error: err })
+            else res.status(200).json({ data: results })
+        })
+    })
+
+    app.post('/unfavuser', function (req, res) {
+        var id = req.body.email.split('@')[0]
+        var tid = req.body.targetEmail.split('@')[0]
+        connection.query(`update follower set isFav = 0 where userid = '${id}' and followerid = '${tid}'`, (err, results, fields) => {
+            if (err) res.status(201).json({ error: err })
+            else res.status(200).json({ data: results })
+        })
+    })
+
+    app.post('/togglefavuser', function (req, res) {
+        var id = req.body.email.split('@')[0]
+        var tid = req.body.targetEmail.split('@')[0]
+        connection.query(`update follower set isFav = !isFav where userid = '${id}' and followerid = '${tid}'`, (err, results, fields) => {
             if (err) res.status(201).json({ error: err })
             else res.status(200).json({ data: results })
         })
