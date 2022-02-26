@@ -65,7 +65,7 @@ module.exports = function (app, connection) {
 
     app.post('/followgroup', function (req, res) {
         var id = req.body.email.split('@')[0]
-        connection.query(`insert into usergroup_user values('${req.body.groupid}', '${id}')`, (err, results, fields) => {
+        connection.query(`insert into usergroup_user values('${req.body.groupid}', '${id}', 0)`, (err, results, fields) => {
             if (err) res.status(201).json({ error: err })
             else res.status(200).json({ data: results })
         })
@@ -79,15 +79,40 @@ module.exports = function (app, connection) {
         })
     })
 
+    app.post('/favgroup', function (req, res) {
+        var id = req.body.email.split('@')[0]
+        connection.query(`update usergroup_user set isFav = 1 where userid = '${id}' and usergroupid = '${req.body.groupid}'`, (err, results, fields) => {
+            if (err) res.status(201).json({ error: err })
+            else res.status(200).json({ data: results })
+        })
+    })
+
+    app.post('/unfavgroup', function (req, res) {
+        var id = req.body.email.split('@')[0]
+        connection.query(`update usergroup_user set isFav = 0 where userid = '${id}' and usergroupid = '${req.body.groupid}''`, (err, results, fields) => {
+            if (err) res.status(201).json({ error: err })
+            else res.status(200).json({ data: results })
+        })
+    })
+
+    app.post('/togglefavgroup', function (req, res) {
+        var id = req.body.email.split('@')[0]
+        connection.query(`update usergroup_user set isFav = !isFav where userid = '${id}' and usergroupid = '${req.body.groupid}'`, (err, results, fields) => {
+            if (err) res.status(201).json({ error: err })
+            else res.status(200).json({ data: results })
+        })
+    })
+
     app.get('/searchuser', function (req, res) {
-        connection.query(`select * from user where (id like '%${req.query.query}%' or nickname like '%${req.query.query}%' or email = '${req.query.query}') and searchable = true`, (err, results, fields) => {
+        var id = req.query.email.split('@')[0]
+        connection.query(`select *, (select count(*) from follower where userid = '${id}' and followerid = u.id) as follow from user as u where (id like '%${req.query.query}%' or nickname like '%${req.query.query}%' or email = '${req.query.query}') and searchable = true`, (err, results, fields) => {
             if (err) res.status(201).json({ error: err })
             else res.status(200).json({ data: results })
         })
     })
 
     app.get('/searchgroup', function (req, res) {
-        connection.query(`select * from usergroup where id like '%${req.query.query}%' or nickname like '%${req.query.query}%'`, (err, results, fields) => {
+        connection.query(`select *, (select count(*) from usergroup_user where userid = '${id}' and usergroupid = u.id) as follow from usergroup as u where id like '%${req.query.query}%' or nickname like '%${req.query.query}%'`, (err, results, fields) => {
             if (err) res.status(201).json({ error: err })
             else res.status(200).json({ data: results })
         })
