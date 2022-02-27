@@ -18,6 +18,22 @@ module.exports = function (app, connection) {
         })
     })
 
+    app.get('/myfavfollower', function (req, res) {
+        var id = req.query.email.split('@')[0]
+        connection.query(`select u.*, f.* from follower as f join user as u on f.followerid = u.id where f.userid = '${id}' and f.isFav = true`, (err, results, fields) => {
+            if (err) res.status(201).json({ error: err })
+            else res.status(200).json({ data: results })
+        })
+    })
+    
+    app.get('/myfavgroup', function (req, res) {
+        var id = req.query.email.split('@')[0]
+        connection.query(`select u.*, g.* from usergroup_user as g join usergroup as u on g.usergroupid = u.id where g.userid = '${id}' g.isFav = true`, (err, results, fields) => {
+            if (err) res.status(201).json({ error: err })
+            else res.status(200).json({ data: results })
+        })
+    })
+
     app.post('/followuser', function (req, res) {
         var id = req.body.email.split('@')[0]
         var tid = req.body.targetEmail.split('@')[0]
