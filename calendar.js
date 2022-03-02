@@ -16,7 +16,7 @@ module.exports = function (app, connection) {
         })
     })
     app.get('/weeklygroup', function (req, res) {
-        connection.query(`select c.* from calendar as c left join calendar_user as u on c.id = u.calendarid join (select * from usergroup_user as uu join usergroup as gg on uu.usergroupid = gg.id where gg.id = '${req.body.groupid}') as uu where ((u.senderid is null and u.userid = uu.userid) or (u.senderid is not null and u.accepted = 0 and u.senderid = uu.userid) or (u.senderid is not null and u.accepted = 1 and (u.userid = uu.userid or u.senderid = uu.userid))) and startDate >= '${req.query.year}-${req.query.month}-${req.query.day}' and startDate < (date_add('${req.query.year}-${req.query.month}-${req.query.day}', interval 1 week))`, (err, results, fields) => {
+        connection.query(`select c.* from calendar as c left join calendar_user as u on c.id = u.calendarid join (select * from usergroup_user as uu join usergroup as gg on uu.usergroupid = gg.id where gg.id = '${req.query.groupid}') as uu where ((u.senderid is null and u.userid = uu.userid) or (u.senderid is not null and u.accepted = 0 and u.senderid = uu.userid) or (u.senderid is not null and u.accepted = 1 and (u.userid = uu.userid or u.senderid = uu.userid))) and startDate >= '${req.query.year}-${req.query.month}-${req.query.day}' and startDate < (date_add('${req.query.year}-${req.query.month}-${req.query.day}', interval 1 week))`, (err, results, fields) => {
             if (err) res.json({ error: err })
             else res.status(200).json({ data: results })
         })
@@ -103,5 +103,13 @@ module.exports = function (app, connection) {
             else res.status(200).json({ data: results })
         })
     })
+
+    app.get('/calendaruser', function (req, res) {
+        connection.query(`select * from calendar_user as cu join calendar as c on c.id = cu.calendarid where c.id = ${req.query.id};`, (err, results, fields) => {
+            if (err) res.json({ error: err })
+            else res.status(200).json({ data: results })
+        })
+    })
+
     return router
 }

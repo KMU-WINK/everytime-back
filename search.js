@@ -9,7 +9,7 @@ module.exports = function (app, connection) {
             else res.status(200).json({ data: results })
         })
     })
-    
+
     app.get('/mygroup', function (req, res) {
         var id = req.query.email.split('@')[0]
         connection.query(`select u.*, g.* from usergroup_user as g join usergroup as u on g.usergroupid = u.id where g.userid = '${id}'`, (err, results, fields) => {
@@ -25,7 +25,7 @@ module.exports = function (app, connection) {
             else res.status(200).json({ data: results })
         })
     })
-    
+
     app.get('/myfavgroup', function (req, res) {
         var id = req.query.email.split('@')[0]
         connection.query(`select u.*, g.* from usergroup_user as g join usergroup as u on g.usergroupid = u.id where g.userid = '${id}' and g.isFav = 1`, (err, results, fields) => {
@@ -140,6 +140,27 @@ module.exports = function (app, connection) {
             else if (err) res.status(201).json({ error: err })
             else res.status(200).json({ data: results })
         })
+    })
+
+    app.post('/group', function (req, res) {
+        connection.query(`insert into usergroup values('${req.body.nickname}', '${req.body.nickname}')`, (err, results, fields) => {
+            if (err) res.status(201).json({ error: err })
+            else res.status(200).json({ data: results })
+        })
+        if (typeof (req.body.userid) === typeof ('')) {
+            connection.query(`insert into usergroup_user values('${req.body.nickname}', '${req.body.userid}', 0)`, (err, results, fields) => {
+                if (err) res.status(201).json({ error: err })
+                else res.status(200).json({ data: results })
+            })
+        }
+        else {
+            for (let i = 0; i < req.body.userid.length; i++) {
+                connection.query(`insert into usergroup_user values('${req.body.nickname}', '${req.body.userid[i]}', 0)`, (err, results, fields) => {
+                    if (err) res.status(201).json({ error: err })
+                    else res.status(200).json({ data: results })
+                })
+            }
+        }
     })
 
     return router
