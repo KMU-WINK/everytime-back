@@ -128,7 +128,7 @@ module.exports = function (app, connection) {
     })
 
     app.get('/searchgroup', function (req, res) {
-        connection.query(`select *, (select count(*) from usergroup_user where userid = '${id}' and usergroupid = u.id) as follow from usergroup as u where id like '%${req.query.query}%' or nickname like '%${req.query.query}%'`, (err, results, fields) => {
+        connection.query(`select * from usergroup where id like '%${req.query.query}%' or nickname like '%${req.query.query}%'`, (err, results, fields) => {
             if (err) res.status(201).json({ error: err })
             else res.status(200).json({ data: results })
         })
