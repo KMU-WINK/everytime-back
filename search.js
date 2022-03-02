@@ -143,21 +143,31 @@ module.exports = function (app, connection) {
     })
 
     app.post('/group', function (req, res) {
+        cnt = 0
         connection.query(`insert into usergroup values('${req.body.nickname}', '${req.body.nickname}')`, (err, results, fields) => {
-            if (err) res.status(201).json({ error: err })
-            else res.status(200).json({ data: results })
+            if (err) {
+                res.status(201).json({ error: err })
+            }
         })
         if (typeof (req.body.userid) === typeof ('')) {
             connection.query(`insert into usergroup_user values('${req.body.nickname}', '${req.body.userid}', 0)`, (err, results, fields) => {
-                if (err) res.status(201).json({ error: err })
-                else res.status(200).json({ data: results })
+                if (err) {
+                    res.status(201).json({ error: err })
+                } else {
+                    res.status(200)
+                }
             })
         }
         else {
             for (let i = 0; i < req.body.userid.length; i++) {
                 connection.query(`insert into usergroup_user values('${req.body.nickname}', '${req.body.userid[i]}', 0)`, (err, results, fields) => {
-                    if (err) res.status(201).json({ error: err })
-                    else res.status(200).json({ data: results })
+                    if (err) {
+                        res.status(201).json({ error: err })
+                    } else {
+                        cnt += 1
+                        if (cnt == req.body.userid.length)
+                            res.status(200)
+                    }
                 })
             }
         }
