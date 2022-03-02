@@ -154,7 +154,7 @@ module.exports = function (app, connection) {
                 if (err) {
                     res.status(201).json({ error: err })
                 } else {
-                    res.status(200)
+                    res.status(200).json({ data: results })
                 }
             })
         }
@@ -166,7 +166,7 @@ module.exports = function (app, connection) {
                     } else {
                         cnt += 1
                         if (cnt == req.body.userid.length)
-                            res.status(200)
+                            res.status(200).json({ data: results })
                     }
                 })
             }
