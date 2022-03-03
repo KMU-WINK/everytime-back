@@ -148,12 +148,14 @@ module.exports = function (app, connection) {
         connection.query(`insert into usergroup values('${req.body.nickname}', '${req.body.nickname}')`, (err, results, fields) => {
             if (err) {
                 res.status(201).json({ error: err })
+                return
             }
         })
         if (typeof (req.body.userid) === typeof ('')) {
             connection.query(`insert into usergroup_user values('${req.body.nickname}', '${req.body.userid}', 0)`, (err, results, fields) => {
                 if (err) {
                     res.status(201).json({ error: err })
+                    return
                 } else {
                     res.status(200).json({ data: results })
                 }
@@ -164,6 +166,7 @@ module.exports = function (app, connection) {
                 connection.query(`insert into usergroup_user values('${req.body.nickname}', '${req.body.userid[i]}', 0)`, (err, results, fields) => {
                     if (err) {
                         res.status(201).json({ error: err })
+                        return
                     } else {
                         cnt += 1
                         if (cnt == req.body.userid.length)
